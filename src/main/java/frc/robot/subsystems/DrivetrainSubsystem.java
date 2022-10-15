@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -25,6 +26,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         leftFalcon1.setInverted(true);
         rightFalcon1.setInverted(false);
+
+        leftFalcon1.setNeutralMode(NeutralMode.Brake);
+        rightFalcon1.setNeutralMode(NeutralMode.Brake);
 
         leftFalcon2.follow(leftFalcon1);
         rightFalcon2.follow(rightFalcon1);

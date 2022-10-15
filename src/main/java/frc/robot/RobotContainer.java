@@ -6,12 +6,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.ExampleCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.IntakeBallCommand;
+import frc.robot.commands.IntakeForwardCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 
 /**
@@ -24,16 +26,19 @@ public class RobotContainer{
 
     public XboxController joystick;
 
-    public DrivetrainSubsystem drivetrainSubsystem;
+    public final DrivetrainSubsystem drivetrainSubsystem;
+    public final IntakeSubsystem intakeSubsystem;
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
     {
         drivetrainSubsystem = new DrivetrainSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
         joystick = new XboxController(0);
 
-        drivetrainSubsystem.setDefaultCommand(new RunCommand(() -> drivetrainSubsystem.tankDrive(joystick.getLeftY(), joystick.getRightY()), drivetrainSubsystem));
+        drivetrainSubsystem.setDefaultCommand(
+            new RunCommand(() -> drivetrainSubsystem.tankDrive(joystick.getLeftY(), joystick.getRightY()), drivetrainSubsystem));
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -47,10 +52,17 @@ public class RobotContainer{
      */
     private void configureButtonBindings()
     {
-        // Add button to command mappings here.
-        // See https://docs.wpilib.org/en/stable/docs/software/commandbased/binding-commands-to-triggers.html
+        setButtonWhileHeld(joystick, XboxController.Button.kRightBumper.value, new IntakeBallCommand(intakeSubsystem));
+        setButtonWhenPressed(joystick, XboxController.Button.kA.value, new IntakeForwardCommand(intakeSubsystem));
     }
-    
+
+    private void setButtonWhenPressed(GenericHID controller, int buttonNumber, Command command) {
+        new JoystickButton(controller, buttonNumber).whenPressed(command);
+    }
+
+    private void setButtonWhileHeld(GenericHID controller, int buttonNumber, Command command) {
+        new JoystickButton(controller, buttonNumber).whileHeld(command);
+    }
     
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
